@@ -109,11 +109,10 @@ MineIDE/release.bat
 ---
 
 ## Интерфейс
+<img width="1920" height="1027" alt="image" src="https://github.com/user-attachments/assets/10206f98-5160-47d8-a2ef-94da14a53cea" />
 
 ```
-<img width="1920" height="1027" alt="image" src="https://github.com/user-attachments/assets/1dfc9306-f9a9-4b21-8e23-bedf17f25f28" />
-<img width="1920" height="1027" alt="image" src="https://github.com/user-attachments/assets/ceac99c3-013a-42ea-af0c-25e1d79529f2" />
-<img width="1920" height="1027" alt="image" src="https://github.com/user-attachments/assets/332d5206-e8aa-4219-8a00-930fdd69e581" />
+
 
 
 
