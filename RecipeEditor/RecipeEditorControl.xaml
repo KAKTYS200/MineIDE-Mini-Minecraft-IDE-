@@ -1,0 +1,348 @@
+<UserControl x:Class="MineIDE.RecipeEditor.RecipeEditorControl"
+        xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
+        xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+        xmlns:local="clr-namespace:MineIDE.RecipeEditor"
+        Background="{DynamicResource BgbgBrush}">
+
+    <UserControl.Resources>
+        <local:ReferenceEqualsConverter x:Key="RefEq"/>
+        <local:ItemIconConverter x:Key="ItemIcon"/>
+        <local:GuiIconConverter x:Key="GuiIcon"/>
+
+        <Style x:Key="SectionTitle" TargetType="TextBlock">
+            <Setter Property="Foreground" Value="{DynamicResource ForegroundBrush}"/>
+            <Setter Property="FontWeight" Value="SemiBold"/>
+            <Setter Property="FontSize" Value="12"/>
+            <Setter Property="Margin" Value="0,0,0,6"/>
+        </Style>
+
+        <Style x:Key="FieldLabel" TargetType="TextBlock">
+            <Setter Property="Foreground" Value="{DynamicResource ForegroundMutedBrush}"/>
+            <Setter Property="FontSize" Value="11"/>
+            <Setter Property="Margin" Value="0,5,0,2"/>
+        </Style>
+
+        <!-- Slot style: no outline — only subtle background tints on select/error -->
+        <Style x:Key="SlotStyle" TargetType="Border">
+            <Setter Property="Background" Value="Transparent"/>
+            <Setter Property="BorderThickness" Value="0"/>
+            <Style.Triggers>
+                <DataTrigger Binding="{Binding IsError}" Value="True">
+                    <Setter Property="Background" Value="#33FC6868"/>
+                </DataTrigger>
+                <DataTrigger Value="True">
+                    <DataTrigger.Binding>
+                        <MultiBinding Converter="{StaticResource RefEq}">
+                            <Binding/>
+                            <Binding Path="DataContext.SelectedItem" RelativeSource="{RelativeSource AncestorType=UserControl}"/>
+                        </MultiBinding>
+                    </DataTrigger.Binding>
+                    <Setter Property="Background" Value="{DynamicResource HighlightBrush}"/>
+                </DataTrigger>
+            </Style.Triggers>
+        </Style>
+
+        <DataTemplate x:Key="SlotTemplate">
+            <Border Style="{StaticResource SlotStyle}" Width="36" Height="36"
+                    AllowDrop="True" DragOver="OnSlotDragOver" Drop="OnSlotDrop"
+                    MouseLeftButtonDown="OnSlotClick" Cursor="Hand" ToolTip="{Binding ShortName}">
+                <Grid>
+                    <!-- Fallback text (shown when no texture is available) -->
+                    <TextBlock Text="{Binding ShortName}"
+                               HorizontalAlignment="Center" VerticalAlignment="Center"
+                               TextAlignment="Center" TextWrapping="Wrap"
+                               Foreground="{DynamicResource ForegroundBrush}"
+                               FontSize="8" Margin="1"
+                               Visibility="{Binding IsEmpty, Converter={StaticResource BoolToVisInv}}"/>
+
+                    <!-- Item texture (drawn over the fallback text) -->
+                    <Image Source="{Binding Id, Converter={StaticResource ItemIcon}}"
+                           Width="32" Height="32"
+                           HorizontalAlignment="Center" VerticalAlignment="Center"
+                           Stretch="Uniform" IsHitTestVisible="False"
+                           RenderOptions.BitmapScalingMode="NearestNeighbor"/>
+
+                    <!-- Count badge -->
+                    <Border HorizontalAlignment="Right" VerticalAlignment="Bottom"
+                            Background="#CC000000" CornerRadius="2" Padding="2,0"
+                            Visibility="{Binding ShowCount, Converter={StaticResource BoolToVis}}">
+                        <TextBlock Text="{Binding Count}" Foreground="White" FontSize="9" FontWeight="SemiBold"/>
+                    </Border>
+                </Grid>
+            </Border>
+        </DataTemplate>
+    </UserControl.Resources>
+
+    <Grid Margin="10">
+        <Grid.RowDefinitions>
+            <RowDefinition Height="Auto"/> <!-- toolbar -->
+            <RowDefinition Height="*"/>    <!-- content -->
+        </Grid.RowDefinitions>
+
+        <!-- ============== TOOLBAR ============== -->
+        <Grid Grid.Row="0" Margin="0,0,0,10">
+            <Grid.ColumnDefinitions>
+                <ColumnDefinition Width="*"/>
+                <ColumnDefinition Width="Auto"/>
+            </Grid.ColumnDefinitions>
+
+            <StackPanel Orientation="Horizontal" VerticalAlignment="Center">
+                <TextBlock Text="Тип рецепта:" VerticalAlignment="Center"
+                           Foreground="{DynamicResource ForegroundMutedBrush}" FontSize="12" Margin="0,0,6,0"/>
+                <ComboBox Style="{StaticResource ModernComboBox}" MinWidth="150" Margin="0,0,10,0"
+                          ItemsSource="{Binding KindOptions}"
+                          SelectedItem="{Binding SelectedKindOption}"
+                          DisplayMemberPath="Label"/>
+
+                <Button Style="{StaticResource FlatButton}" Click="OnNewClick" Padding="8,4" Margin="0,0,2,0">
+                    <StackPanel Orientation="Horizontal">
+                        <TextBlock Text="&#xE710;" FontFamily="Segoe MDL2 Assets" Margin="0,0,5,0" VerticalAlignment="Center"/>
+                        <TextBlock Text="Новый" VerticalAlignment="Center"/>
+                    </StackPanel>
+                </Button>
+                <Button Style="{StaticResource FlatButton}" Click="OnOpenClick" Padding="8,4" Margin="0,0,2,0">
+                    <StackPanel Orientation="Horizontal">
+                        <TextBlock Text="&#xE8E5;" FontFamily="Segoe MDL2 Assets" Margin="0,0,5,0" VerticalAlignment="Center"/>
+                        <TextBlock Text="Открыть" VerticalAlignment="Center"/>
+                    </StackPanel>
+                </Button>
+                <Button Style="{StaticResource FlatButton}" Click="OnSaveClick" Padding="8,4" Margin="0,0,2,0">
+                    <StackPanel Orientation="Horizontal">
+                        <TextBlock Text="&#xE74E;" FontFamily="Segoe MDL2 Assets" Margin="0,0,5,0" VerticalAlignment="Center"/>
+                        <TextBlock Text="Сохранить" VerticalAlignment="Center"/>
+                    </StackPanel>
+                </Button>
+                <Button Style="{StaticResource FlatButton}" Click="OnSaveAsClick" Padding="8,4" Margin="0,0,10,0">
+                    <StackPanel Orientation="Horizontal">
+                        <TextBlock Text="&#xE792;" FontFamily="Segoe MDL2 Assets" Margin="0,0,5,0" VerticalAlignment="Center"/>
+                        <TextBlock Text="Сохранить как" VerticalAlignment="Center"/>
+                    </StackPanel>
+                </Button>
+
+                <Border Width="1" Background="{DynamicResource BorderLightBrush}" Margin="0,4,10,4"/>
+
+                <Button Style="{StaticResource IconButton}" ToolTip="Отменить (Undo)"
+                        Click="OnUndoClick" IsEnabled="{Binding CanUndo}" Width="28" Height="26" Margin="0,0,2,0">
+                    <TextBlock Text="&#xE7A7;" FontFamily="Segoe MDL2 Assets" FontSize="13"/>
+                </Button>
+                <Button Style="{StaticResource IconButton}" ToolTip="Повторить (Redo)"
+                        Click="OnRedoClick" IsEnabled="{Binding CanRedo}" Width="28" Height="26">
+                    <TextBlock Text="&#xE7A6;" FontFamily="Segoe MDL2 Assets" FontSize="13"/>
+                </Button>
+            </StackPanel>
+
+            <TextBlock Grid.Column="1" Text="{Binding StatusText}" VerticalAlignment="Center"
+                       Foreground="{DynamicResource ForegroundMutedBrush}" FontSize="11"/>
+        </Grid>
+
+        <!-- ============== CONTENT ============== -->
+        <Grid Grid.Row="1">
+            <!-- ==== craft GUI + item settings + JSON + item palette (single column) ==== -->
+            <Grid>
+                <Grid.RowDefinitions>
+                    <RowDefinition Height="Auto"/>
+                    <RowDefinition Height="Auto"/>
+                    <RowDefinition Height="Auto"/>
+                    <RowDefinition Height="Auto"/>
+                    <RowDefinition Height="Auto"/>
+                    <RowDefinition Height="*"/>
+                </Grid.RowDefinitions>
+
+                <TextBlock Grid.Row="0" Text="Крафт" Style="{StaticResource SectionTitle}"/>
+
+                <!-- Craft GUI -->
+                <Grid Grid.Row="1" VerticalAlignment="Top" HorizontalAlignment="Center">
+                    <Grid.RowDefinitions>
+                        <RowDefinition Height="Auto"/>
+                        <RowDefinition Height="Auto"/>
+                    </Grid.RowDefinitions>
+
+                    <!-- Vanilla GUI surface (176x166 game GUI scaled 2x); slots overlay its real holes -->
+                    <Grid Grid.Row="0" Width="352" Height="168">
+                        <Image Source="{Binding GuiTexture, Converter={StaticResource GuiIcon}}"
+                               Width="352" Height="168" Stretch="Fill" IsHitTestVisible="False"
+                               RenderOptions.BitmapScalingMode="NearestNeighbor"/>
+
+                        <!-- Shaped / Shapeless (crafting table 3x3 + result) -->
+                        <Canvas Width="352" Height="168"
+                                Visibility="{Binding Document.IsGridRecipe, Converter={StaticResource BoolToVis}}">
+                            <ContentControl Content="{Binding Document.Grid[0]}" ContentTemplate="{StaticResource SlotTemplate}" Canvas.Left="60" Canvas.Top="34"/>
+                            <ContentControl Content="{Binding Document.Grid[1]}" ContentTemplate="{StaticResource SlotTemplate}" Canvas.Left="96" Canvas.Top="34"/>
+                            <ContentControl Content="{Binding Document.Grid[2]}" ContentTemplate="{StaticResource SlotTemplate}" Canvas.Left="132" Canvas.Top="34"/>
+                            <ContentControl Content="{Binding Document.Grid[3]}" ContentTemplate="{StaticResource SlotTemplate}" Canvas.Left="60" Canvas.Top="70"/>
+                            <ContentControl Content="{Binding Document.Grid[4]}" ContentTemplate="{StaticResource SlotTemplate}" Canvas.Left="96" Canvas.Top="70"/>
+                            <ContentControl Content="{Binding Document.Grid[5]}" ContentTemplate="{StaticResource SlotTemplate}" Canvas.Left="132" Canvas.Top="70"/>
+                            <ContentControl Content="{Binding Document.Grid[6]}" ContentTemplate="{StaticResource SlotTemplate}" Canvas.Left="60" Canvas.Top="106"/>
+                            <ContentControl Content="{Binding Document.Grid[7]}" ContentTemplate="{StaticResource SlotTemplate}" Canvas.Left="96" Canvas.Top="106"/>
+                            <ContentControl Content="{Binding Document.Grid[8]}" ContentTemplate="{StaticResource SlotTemplate}" Canvas.Left="132" Canvas.Top="106"/>
+                            <ContentControl Content="{Binding Document.Result}" ContentTemplate="{StaticResource SlotTemplate}" Canvas.Left="248" Canvas.Top="70"/>
+                        </Canvas>
+
+                        <!-- Furnace (smelting / blasting / smoking / campfire): input + result -->
+                        <Canvas Width="352" Height="168"
+                                Visibility="{Binding Document.IsFurnaceRecipe, Converter={StaticResource BoolToVis}}">
+                            <ContentControl Content="{Binding Document.Ingredient}" ContentTemplate="{StaticResource SlotTemplate}" Canvas.Left="112" Canvas.Top="34"/>
+                            <ContentControl Content="{Binding Document.Result}" ContentTemplate="{StaticResource SlotTemplate}" Canvas.Left="232" Canvas.Top="70"/>
+                        </Canvas>
+
+                        <!-- Stonecutting: input + result -->
+                        <Canvas Width="352" Height="168"
+                                Visibility="{Binding Document.IsStonecutting, Converter={StaticResource BoolToVis}}">
+                            <ContentControl Content="{Binding Document.Ingredient}" ContentTemplate="{StaticResource SlotTemplate}" Canvas.Left="40" Canvas.Top="66"/>
+                            <ContentControl Content="{Binding Document.Result}" ContentTemplate="{StaticResource SlotTemplate}" Canvas.Left="286" Canvas.Top="66"/>
+                        </Canvas>
+
+                        <!-- Smithing: template + base + addition + result -->
+                        <Canvas Width="352" Height="168"
+                                Visibility="{Binding Document.IsSmithingRecipe, Converter={StaticResource BoolToVis}}">
+                            <ContentControl Content="{Binding Document.Template}" ContentTemplate="{StaticResource SlotTemplate}" Canvas.Left="16" Canvas.Top="96"/>
+                            <ContentControl Content="{Binding Document.Base}" ContentTemplate="{StaticResource SlotTemplate}" Canvas.Left="52" Canvas.Top="96"/>
+                            <ContentControl Content="{Binding Document.Addition}" ContentTemplate="{StaticResource SlotTemplate}" Canvas.Left="88" Canvas.Top="96"/>
+                            <ContentControl Content="{Binding Document.Result}" ContentTemplate="{StaticResource SlotTemplate}" Canvas.Left="196" Canvas.Top="96"/>
+                        </Canvas>
+                    </Grid>
+
+                    <!-- Furnace extras (experience / cooking time) -->
+                    <StackPanel Grid.Row="1" Orientation="Horizontal" HorizontalAlignment="Center" Margin="0,10,0,0"
+                                Visibility="{Binding Document.IsFurnaceRecipe, Converter={StaticResource BoolToVis}}">
+                        <TextBlock Text="Опыт:" Foreground="{DynamicResource ForegroundMutedBrush}" FontSize="11" VerticalAlignment="Center" Margin="0,0,6,0"/>
+                        <TextBox Style="{StaticResource ModernTextBox}" Width="60" Margin="0,0,10,0"
+                                 Text="{Binding Document.Experience, UpdateSourceTrigger=LostFocus}" ToolTip="experience (float)"/>
+                        <TextBlock Text="Время (ticks):" Foreground="{DynamicResource ForegroundMutedBrush}" FontSize="11" VerticalAlignment="Center" Margin="0,0,6,0"/>
+                        <TextBox Style="{StaticResource ModernTextBox}" Width="60"
+                                 Text="{Binding Document.CookingTime, UpdateSourceTrigger=LostFocus}" ToolTip="cookingtime (0 = значение по умолчанию)"/>
+                    </StackPanel>
+                </Grid>
+
+                <!-- Item settings — directly under the craft grid -->
+                <Border Grid.Row="2" Margin="0,10,0,0" Background="{DynamicResource SidebarBrush}"
+                        BorderBrush="{DynamicResource BorderLightBrush}" BorderThickness="1"
+                        CornerRadius="4" Padding="10">
+                    <StackPanel>
+                        <TextBlock Text="Настройки предмета" Style="{StaticResource SectionTitle}"/>
+                        <Grid>
+                            <Grid.ColumnDefinitions>
+                                <ColumnDefinition Width="2*"/>
+                                <ColumnDefinition Width="Auto"/>
+                                <ColumnDefinition Width="*"/>
+                                <ColumnDefinition Width="*"/>
+                            </Grid.ColumnDefinitions>
+                            <StackPanel Grid.Column="0" Margin="0,0,10,0">
+                                <TextBlock Text="Item id" Style="{StaticResource FieldLabel}"/>
+                                <TextBox Style="{StaticResource ModernTextBox}"
+                                         Text="{Binding SelectedItem.Id, UpdateSourceTrigger=PropertyChanged}"
+                                         ToolTip="Например: minecraft:iron_ingot"/>
+                            </StackPanel>
+                            <StackPanel Grid.Column="1" Margin="0,0,10,0">
+                                <TextBlock Text="Количество" Style="{StaticResource FieldLabel}"/>
+                                <TextBox Style="{StaticResource ModernTextBox}" Width="60" HorizontalAlignment="Left"
+                                         Text="{Binding SelectedItem.Count, UpdateSourceTrigger=LostFocus}"
+                                         ToolTip="count (целое число)"/>
+                            </StackPanel>
+                            <StackPanel Grid.Column="2" Margin="0,0,10,0">
+                                <TextBlock Text="Group" Style="{StaticResource FieldLabel}"/>
+                                <TextBox Style="{StaticResource ModernTextBox}"
+                                         Text="{Binding Document.Group, UpdateSourceTrigger=PropertyChanged}"
+                                         ToolTip="group — группировка рецептов в книге рецептов"/>
+                            </StackPanel>
+                            <StackPanel Grid.Column="3">
+                                <TextBlock Text="NBT (SNBT)" Style="{StaticResource FieldLabel}"/>
+                                <TextBox Style="{StaticResource ModernTextBox}"
+                                         Text="{Binding SelectedItem.Nbt, UpdateSourceTrigger=PropertyChanged}"
+                                         ToolTip="Например: {Damage:0}"/>
+                            </StackPanel>
+                        </Grid>
+                    </StackPanel>
+                </Border>
+
+                <!-- JSON preview — под крафтом и настройками, обновляется автоматически -->
+                <Border Grid.Row="3" Margin="0,10,0,0" Background="{DynamicResource SidebarBrush}"
+                        BorderBrush="{DynamicResource BorderLightBrush}" BorderThickness="1"
+                        CornerRadius="4" Padding="10">
+                    <Grid>
+                        <Grid.RowDefinitions>
+                            <RowDefinition Height="Auto"/>
+                            <RowDefinition Height="Auto"/>
+                            <RowDefinition Height="Auto"/>
+                        </Grid.RowDefinitions>
+
+                        <Grid Grid.Row="0" Margin="0,0,0,6">
+                            <TextBlock Text="JSON (обновляется автоматически)" Style="{StaticResource SectionTitle}"
+                                       VerticalAlignment="Center"/>
+                            <Button Style="{StaticResource IconButton}" HorizontalAlignment="Right"
+                                    ToolTip="Скопировать JSON" Click="OnCopyJsonClick" Width="24" Height="22">
+                                <TextBlock Text="&#xE8C8;" FontFamily="Segoe MDL2 Assets" FontSize="12"/>
+                            </Button>
+                        </Grid>
+
+                        <Border Grid.Row="1" Background="{DynamicResource ErrorBrush}" CornerRadius="3" Padding="8,6"
+                                Margin="0,0,0,6" Visibility="{Binding HasErrors, Converter={StaticResource BoolToVis}}">
+                            <StackPanel>
+                                <TextBlock Text="Ошибки:" Foreground="White" FontWeight="SemiBold" FontSize="11"/>
+                                <TextBlock Text="{Binding ErrorText}" Foreground="White" FontSize="11" TextWrapping="Wrap"/>
+                            </StackPanel>
+                        </Border>
+
+                        <Border Grid.Row="2" Background="{DynamicResource BgbgBrush}"
+                                BorderBrush="{DynamicResource BorderLightBrush}" BorderThickness="1" CornerRadius="4">
+                            <TextBox Text="{Binding JsonText, Mode=OneWay}"
+                                     Background="Transparent" BorderThickness="0"
+                                     Foreground="{DynamicResource SyntaxMethodBrush}"
+                                     FontFamily="{DynamicResource MonoFontFamily}" FontSize="12"
+                                     IsReadOnly="True" TextWrapping="NoWrap"
+                                     VerticalScrollBarVisibility="Auto" HorizontalScrollBarVisibility="Auto"
+                                     Padding="8" AcceptsReturn="True" AcceptsTab="True" Height="150"/>
+                        </Border>
+                    </Grid>
+                </Border>
+
+                <!-- Item palette header -->
+                <Grid Grid.Row="4" Margin="0,10,0,4">
+                    <Grid.ColumnDefinitions>
+                        <ColumnDefinition Width="Auto"/>
+                        <ColumnDefinition Width="*"/>
+                        <ColumnDefinition Width="Auto"/>
+                    </Grid.ColumnDefinitions>
+                    <TextBlock Grid.Column="0" Text="Предметы" Style="{StaticResource SectionTitle}" Margin="0,0,8,0" VerticalAlignment="Center"/>
+                    <TextBox Grid.Column="1" x:Name="ResourceInput" Style="{StaticResource ModernTextBox}"
+                             Margin="0,0,6,0" ToolTip="item id (например minecraft:quartz)"/>
+                    <Button Grid.Column="2" Style="{StaticResource IconButton}" ToolTip="Добавить ресурс"
+                            Click="OnAddResourceClick" Width="26" Height="26">
+                        <TextBlock Text="&#xE710;" FontFamily="Segoe MDL2 Assets"/>
+                    </Button>
+                </Grid>
+
+                <!-- Item palette (all Minecraft items/blocks) -->
+                <ListBox x:Name="ResourceList" Grid.Row="5"
+                         ItemsSource="{Binding Resources}"
+                         Background="{DynamicResource SidebarBrush}" BorderBrush="{DynamicResource BorderLightBrush}" BorderThickness="1"
+                         Foreground="{DynamicResource ForegroundBrush}"
+                         PreviewMouseLeftButtonDown="OnResourceMouseDown"
+                         ScrollViewer.HorizontalScrollBarVisibility="Disabled"
+                         ScrollViewer.CanContentScroll="True"
+                         VirtualizingPanel.IsVirtualizing="True"
+                         VirtualizingPanel.VirtualizationMode="Recycling">
+                    <ListBox.ItemTemplate>
+                        <DataTemplate>
+                            <StackPanel Orientation="Horizontal">
+                                <Image Source="{Binding ., Converter={StaticResource ItemIcon}}"
+                                       Width="20" Height="20" Margin="0,0,8,0"
+                                       VerticalAlignment="Center" Stretch="Uniform"
+                                       RenderOptions.BitmapScalingMode="NearestNeighbor"/>
+                                <TextBlock Text="{Binding}" VerticalAlignment="Center"
+                                           Foreground="{DynamicResource ForegroundBrush}"
+                                           FontFamily="{DynamicResource MonoFontFamily}" FontSize="12"/>
+                            </StackPanel>
+                        </DataTemplate>
+                    </ListBox.ItemTemplate>
+                    <ListBox.ItemContainerStyle>
+                        <Style TargetType="ListBoxItem">
+                            <Setter Property="Padding" Value="4,2"/>
+                            <Setter Property="Cursor" Value="Hand"/>
+                        </Style>
+                    </ListBox.ItemContainerStyle>
+                </ListBox>
+            </Grid>
+        </Grid>
+    </Grid>
+</UserControl>

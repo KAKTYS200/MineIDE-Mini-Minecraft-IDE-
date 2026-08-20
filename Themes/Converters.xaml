@@ -1,0 +1,11 @@
+<ResourceDictionary xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
+                    xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+                    xmlns:helpers="clr-namespace:MineIDE.Helpers">
+
+    <helpers:BoolToVisibilityConverter x:Key="BoolToVis"/>
+    <helpers:BoolToVisibilityConverterInverted x:Key="BoolToVisInv"/>
+    <helpers:NullToVisibilityConverter x:Key="NullToVis"/>
+    <helpers:CountToBoolConverter x:Key="CountToBool"/>
+    <helpers:CountToVisibilityConverter x:Key="CountToVis"/>
+
+</ResourceDictionary>

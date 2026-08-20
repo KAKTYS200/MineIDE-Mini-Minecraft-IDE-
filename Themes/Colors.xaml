@@ -1,0 +1,97 @@
+<ResourceDictionary xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
+                    xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+                    xmlns:sys="clr-namespace:System;assembly=mscorlib">
+
+    <!-- VS Code Dark+ inspired palette -->
+    <Color x:Key="BgbgColor">#FF1E1E1E</Color>
+    <Color x:Key="BgbgColorLight">#FF252526</Color>
+    <Color x:Key="SidebarColor">#FF333333</Color>
+    <Color x:Key="ActivityBarColor">#FF2C2C2C</Color>
+    <Color x:Key="StatusBarColor">#FF007ACC</Color>
+    <Color x:Key="PanelColor">#FF1E1E1E</Color>
+    <Color x:Key="TitleBarColor">#FF3C3C3C</Color>
+    <Color x:Key="BorderColor">#FF1C1C1C</Color>
+    <Color x:Key="BorderLightColor">#FF2D2D30</Color>
+    <Color x:Key="ForegroundColor">#FFCCCCCC</Color>
+    <Color x:Key="ForegroundMutedColor">#FF858585</Color>
+    <Color x:Key="ForegroundDimColor">#FF6A6A6A</Color>
+    <Color x:Key="AccentColor">#FF007ACC</Color>
+    <Color x:Key="AccentHoverColor">#FF1F8AD2</Color>
+    <Color x:Key="AccentPressedColor">#FF005A9E</Color>
+    <Color x:Key="SelectionColor">#FF094771</Color>
+    <Color x:Key="HighlightColor">#22FFFFFF</Color>
+
+    <!-- Semantic accents -->
+    <Color x:Key="SuccessColor">#FF4EC9B0</Color>
+    <Color x:Key="WarningColor">#FFDCDCAA</Color>
+    <Color x:Key="ErrorColor">#FFFC6868</Color>
+    <Color x:Key="InfoColor">#FF9CDCFE</Color>
+    <Color x:Key="MinecraftGreenColor">#FF5BAE3F</Color>
+    <Color x:Key="MinecraftGoldColor">#FFFFAA00</Color>
+
+    <!-- Syntax highlight -->
+    <Color x:Key="SyntaxKeywordColor">#FF569CD6</Color>
+    <Color x:Key="SyntaxStringColor">#FFCE9178</Color>
+    <Color x:Key="SyntaxNumberColor">#FFB5CEA8</Color>
+    <Color x:Key="SyntaxCommentColor">#FF6A9955</Color>
+    <Color x:Key="SyntaxTypeColor">#FF4EC9B0</Color>
+    <Color x:Key="SyntaxMethodColor">#FFDCDCAA</Color>
+
+    <!-- Brushes (Dark) -->
+    <SolidColorBrush x:Key="BgbgBrush" Color="{StaticResource BgbgColor}"/>
+    <SolidColorBrush x:Key="BgbgLightBrush" Color="{StaticResource BgbgColorLight}"/>
+    <SolidColorBrush x:Key="SidebarBrush" Color="{StaticResource SidebarColor}"/>
+    <SolidColorBrush x:Key="ActivityBarBrush" Color="{StaticResource ActivityBarColor}"/>
+    <SolidColorBrush x:Key="StatusBarBrush" Color="{StaticResource StatusBarColor}"/>
+    <SolidColorBrush x:Key="PanelBrush" Color="{StaticResource PanelColor}"/>
+    <SolidColorBrush x:Key="TitleBarBrush" Color="{StaticResource TitleBarColor}"/>
+    <SolidColorBrush x:Key="BorderBrush" Color="{StaticResource BorderColor}"/>
+    <SolidColorBrush x:Key="BorderLightBrush" Color="{StaticResource BorderLightColor}"/>
+    <SolidColorBrush x:Key="ForegroundBrush" Color="{StaticResource ForegroundColor}"/>
+    <SolidColorBrush x:Key="ForegroundMutedBrush" Color="{StaticResource ForegroundMutedColor}"/>
+    <SolidColorBrush x:Key="ForegroundDimBrush" Color="{StaticResource ForegroundDimColor}"/>
+    <SolidColorBrush x:Key="AccentBrush" Color="{StaticResource AccentColor}"/>
+    <SolidColorBrush x:Key="AccentHoverBrush" Color="{StaticResource AccentHoverColor}"/>
+    <SolidColorBrush x:Key="SelectionBrush" Color="{StaticResource SelectionColor}"/>
+    <SolidColorBrush x:Key="HighlightBrush" Color="{StaticResource HighlightColor}"/>
+    <SolidColorBrush x:Key="MinecraftGreenBrush" Color="{StaticResource MinecraftGreenColor}"/>
+    <SolidColorBrush x:Key="MinecraftGoldBrush" Color="{StaticResource MinecraftGoldColor}"/>
+    <SolidColorBrush x:Key="AccentPressedBrush" Color="{StaticResource AccentPressedColor}"/>
+
+    <SolidColorBrush x:Key="SuccessBrush" Color="{StaticResource SuccessColor}"/>
+    <SolidColorBrush x:Key="WarningBrush" Color="{StaticResource WarningColor}"/>
+    <SolidColorBrush x:Key="ErrorBrush" Color="{StaticResource ErrorColor}"/>
+    <SolidColorBrush x:Key="InfoBrush" Color="{StaticResource InfoColor}"/>
+
+    <SolidColorBrush x:Key="SyntaxKeywordBrush" Color="{StaticResource SyntaxKeywordColor}"/>
+    <SolidColorBrush x:Key="SyntaxStringBrush" Color="{StaticResource SyntaxStringColor}"/>
+    <SolidColorBrush x:Key="SyntaxNumberBrush" Color="{StaticResource SyntaxNumberColor}"/>
+    <SolidColorBrush x:Key="SyntaxCommentBrush" Color="{StaticResource SyntaxCommentColor}"/>
+    <SolidColorBrush x:Key="SyntaxTypeBrush" Color="{StaticResource SyntaxTypeColor}"/>
+    <SolidColorBrush x:Key="SyntaxMethodBrush" Color="{StaticResource SyntaxMethodColor}"/>
+
+    <!-- Gradients -->
+    <LinearGradientBrush x:Key="AccentGradient" StartPoint="0,0" EndPoint="1,1">
+        <GradientStop Color="#FF007ACC" Offset="0"/>
+        <GradientStop Color="#FF1F8AD2" Offset="1"/>
+    </LinearGradientBrush>
+
+    <LinearGradientBrush x:Key="MinecraftGradient" StartPoint="0,0" EndPoint="1,1">
+        <GradientStop Color="#FF5BAE3F" Offset="0"/>
+        <GradientStop Color="#FFFFAA00" Offset="1"/>
+    </LinearGradientBrush>
+
+    <!-- Common sizing -->
+    <sys:Double x:Key="TitleBarHeight">36</sys:Double>
+    <sys:Double x:Key="StatusBarHeight">22</sys:Double>
+    <sys:Double x:Key="ActivityBarWidth">48</sys:Double>
+    <sys:Double x:Key="TopBarHeight">40</sys:Double>
+
+    <!-- Base font -->
+    <FontFamily x:Key="UiFontFamily">Segoe UI</FontFamily>
+    <FontFamily x:Key="MonoFontFamily">Cascadia Mono, Consolas, Courier New</FontFamily>
+    <sys:Double x:Key="UiFontSize">13</sys:Double>
+    <sys:Double x:Key="MonoFontSize">13</sys:Double>
+    <sys:Double x:Key="SmallFontSize">11</sys:Double>
+
+</ResourceDictionary>
