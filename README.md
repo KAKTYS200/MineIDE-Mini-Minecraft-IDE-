@@ -111,12 +111,6 @@ MineIDE/release.bat
 ## Интерфейс
 <img width="1920" height="1027" alt="image" src="https://github.com/user-attachments/assets/10206f98-5160-47d8-a2ef-94da14a53cea" />
 
-```
-
-
-
-
-```
 
 **Левая панель (5 вкладок):** Explorer · Mods · Data Packs · Performance · Extensions.
 
