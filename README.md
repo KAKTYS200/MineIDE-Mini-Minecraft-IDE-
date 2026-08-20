@@ -5,9 +5,7 @@
 перетаскиваемые панели, встроенный редактор кода и 3D-редактор моделей (Blockbench).
 
 ---
-![Uploading image.png…]()
-<img width="1920" height="1027" alt="image" src="https://github.com/user-attachments/assets/d56fbef1-6855-49a1-af86-7528cd9682aa" />
-![Uploading image.png…]()
+
 
 
 ## Содержание
@@ -113,7 +111,8 @@ MineIDE/release.bat
 ## Интерфейс
 
 ```
-![Uploading image.png…]()
+<img width="1920" height="1027" alt="image" src="https://github.com/user-attachments/assets/c87303f1-1188-4e10-a91c-393fd2f9d66a" />
+
 
 ```
 
