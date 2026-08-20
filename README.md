@@ -6,6 +6,9 @@
 
 ---
 ![Uploading image.png…]()
+<img width="1920" height="1027" alt="image" src="https://github.com/user-attachments/assets/d56fbef1-6855-49a1-af86-7528cd9682aa" />
+![Uploading image.png…]()
+
 
 ## Содержание
 
